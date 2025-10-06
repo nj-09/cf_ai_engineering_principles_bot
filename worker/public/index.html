@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Hello, World!</title>
+	</head>
+	<body>
+<style>
+  body { font-family: sans-serif; display: flex; flex-direction: column; height: 95vh; }
+  #chat-history { flex-grow: 1; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; overflow-y: scroll; }
+  #input-container { display: flex; }
+  #chat-input { flex-grow: 1; padding: 8px; }
+  #send-button { padding: 8px 12px; }
+</style>
+
+<h1>Accessibility Heuristics Bot</h1>
+<div id="chat-history">
+  <!-- Chat messages will appear here -->
+</div>
+<div id="input-container">
+  <input type="text" id="chat-input" placeholder="Ask about web accessibility...">
+  <button id="send-button">Send</button>
+</div>
+
+<script>
+  // Our JavaScript logic will go here in the next step
+</script>
+	</body>
+</html>
