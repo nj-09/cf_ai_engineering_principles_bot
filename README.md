@@ -6,7 +6,7 @@ This is an AI-powered application built for the Cloudflare 2026 Internship assig
 
 ## 🎥 Live Demo & Video Walkthrough
 
-**[>> Click here to watch a 45-second demo of the bot in action <<](Your-Video-Link-Goes-Here)**
+![Live Demo of the Bot](./demo.mp4)
 
 You can also test the live, deployed application yourself at:
 **[https://cf-ai-engineering-principles-bot.pages.dev](https://cf-ai-engineering-principles-bot.pages.dev)** 
