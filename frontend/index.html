@@ -29,72 +29,73 @@
     </div>
 
     <script>
-        const chatHistory = document.getElementById('chat-history');
-        const chatInput = document.getElementById('chat-input');
-        const sendButton = document.getElementById('send-button');
+const chatHistory = document.getElementById('chat-history');
+const chatInput = document.getElementById('chat-input');
+const sendButton = document.getElementById('send-button');
 
-        function addMessage(sender, message) {
-            const messageContainer = document.createElement('div');
-            messageContainer.className = `message ${sender.toLowerCase()}-message`;
-            
-            const senderElement = document.createElement('div');
-            senderElement.className = 'sender';
-            senderElement.innerText = sender;
+// --- MEMORY LOGIC: START ---
+// 1. Create a unique session ID for this conversation when the page loads
+let sessionId = crypto.randomUUID();
+// --- MEMORY LOGIC: END ---
 
-            const contentElement = document.createElement('div');
-            contentElement.className = 'content';
-            contentElement.innerText = message;
+function addMessage(sender, message) {
+    // ... (This function remains exactly the same as before) ...
+    const messageContainer = document.createElement('div');
+    messageContainer.className = `message ${sender.toLowerCase()}-message`;
+    const senderElement = document.createElement('div');
+    senderElement.className = 'sender';
+    senderElement.innerText = sender;
+    const contentElement = document.createElement('div');
+    contentElement.className = 'content';
+    contentElement.innerText = message;
+    messageContainer.appendChild(senderElement);
+    messageContainer.appendChild(contentElement);
+    chatHistory.appendChild(messageContainer);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+}
 
-            messageContainer.appendChild(senderElement);
-            messageContainer.appendChild(contentElement);
-            chatHistory.appendChild(messageContainer);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
+async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
 
-        async function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
+    addMessage('You', message);
+    chatInput.value = '';
+    sendButton.disabled = true;
+    addMessage('AI', 'Thinking...');
 
-            addMessage('You', message);
-            chatInput.value = '';
-            sendButton.disabled = true;
-            addMessage('AI', 'Thinking...');
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message }),
-                });
-
-                // Remove the "Thinking..." message
-                chatHistory.removeChild(chatHistory.lastChild);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                addMessage('AI', data.response);
-
-            } catch (error) {
-                if (chatHistory.lastChild && chatHistory.lastChild.innerText.includes('Thinking...')) {
-                     chatHistory.removeChild(chatHistory.lastChild);
-                }
-                addMessage('Error', 'Sorry, something went wrong with the AI request.');
-                console.error('Fetch error:', error);
-            } finally {
-                sendButton.disabled = false;
-                chatInput.focus();
-            }
-        }
-
-        sendButton.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+    try {
+        // --- MEMORY LOGIC: START ---
+        // 2. Send the message AND the sessionId to the backend
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message, sessionId: sessionId }),
         });
+        // --- MEMORY LOGIC: END ---
+
+        chatHistory.removeChild(chatHistory.lastChild);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        addMessage('AI', data.response);
+
+    } catch (error) {
+        if (chatHistory.lastChild && chatHistory.lastChild.innerText.includes('Thinking...')) {
+             chatHistory.removeChild(chatHistory.lastChild);
+        }
+        addMessage('Error', 'Sorry, something went wrong with the AI request.');
+        console.error('Fetch error:', error);
+    } finally {
+        sendButton.disabled = false;
+        chatInput.focus();
+    }
+}
+
+sendButton.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => (e.key === 'Enter' && sendMessage()));
     </script>
 </body>
-</html>
+</html
