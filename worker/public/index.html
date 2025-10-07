@@ -1,30 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
-	</head>
-	<body>
-<style>
-  body { font-family: sans-serif; display: flex; flex-direction: column; height: 95vh; }
-  #chat-history { flex-grow: 1; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; overflow-y: scroll; }
-  #input-container { display: flex; }
-  #chat-input { flex-grow: 1; padding: 8px; }
-  #send-button { padding: 8px 12px; }
-</style>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudflare Engineering Principles Bot</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; background-color: #f7f7f7; }
+        h1 { color: #333; }
+        #chat-history { height: 500px; border: 1px solid #ddd; background-color: #fff; padding: 10px; margin-bottom: 10px; overflow-y: scroll; border-radius: 5px; }
+        #input-container { display: flex; }
+        #chat-input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px 0 0 5px; }
+        #send-button { padding: 10px 15px; border: none; background-color: #f6821f; color: white; cursor: pointer; border-radius: 0 5px 5px 0; }
+        #send-button:disabled { background-color: #ccc; }
+        .message { margin-bottom: 10px; line-height: 1.4; }
+        .user-message { text-align: right; }
+        .user-message .content { display: inline-block; background-color: #007bff; color: white; padding: 8px 12px; border-radius: 10px; max-width: 80%; }
+        .ai-message .content { display: inline-block; background-color: #e9e9eb; color: #333; padding: 8px 12px; border-radius: 10px; max-width: 80%; white-space: pre-wrap; }
+        .sender { font-weight: bold; margin-bottom: 4px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
 
-<h1>Accessibility Heuristics Bot</h1>
-<div id="chat-history">
-  <!-- Chat messages will appear here -->
-</div>
-<div id="input-container">
-  <input type="text" id="chat-input" placeholder="Ask about web accessibility...">
-  <button id="send-button">Send</button>
-</div>
+    <h1>Engineering Principles Bot</h1>
+    <div id="chat-history"></div>
+    <div id="input-container">
+        <input type="text" id="chat-input" placeholder="Ask about CDNs, DDoS, Zero Trust...">
+        <button id="send-button">Send</button>
+    </div>
 
-<script>
-  // Our JavaScript logic will go here in the next step
-</script>
-	</body>
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+
+        function addMessage(sender, message) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `message ${sender.toLowerCase()}-message`;
+            
+            const senderElement = document.createElement('div');
+            senderElement.className = 'sender';
+            senderElement.innerText = sender;
+
+            const contentElement = document.createElement('div');
+            contentElement.className = 'content';
+            contentElement.innerText = message;
+
+            messageContainer.appendChild(senderElement);
+            messageContainer.appendChild(contentElement);
+            chatHistory.appendChild(messageContainer);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            addMessage('You', message);
+            chatInput.value = '';
+            sendButton.disabled = true;
+            const thinkingMessage = addMessage('AI', 'Thinking...'); // Changed to keep reference
+
+            try {
+                // The API endpoint must match the worker logic
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message }),
+                });
+
+                // Remove the "Thinking..." message
+                chatHistory.removeChild(chatHistory.lastChild);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                addMessage('AI', data.response);
+
+            } catch (error) {
+                // Remove the "Thinking..." message before showing error
+                if (chatHistory.lastChild) {
+                     chatHistory.removeChild(chatHistory.lastChild);
+                }
+                addMessage('Error', 'Sorry, something went wrong with the AI request.');
+                console.error('Fetch error:', error);
+            } finally {
+                sendButton.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
 </html>
