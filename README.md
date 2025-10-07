@@ -10,7 +10,7 @@ You can test the live, deployed application yourself at:
 **[https://cf-ai-engineering-principles-bot.pages.dev](https://cf-ai-engineering-principles-bot.pages.dev)** 
 *(Please note the live demo may take a few seconds to "wake up" on the first request.)*
 
-**Click the image below to watch a 45-second video walkthrough of the bot in action:**
+**Click the image below to watch a 20-second video walkthrough of the bot in action:**
 
 [ [![Live Demo of the Bot](./demo_thumbnail.png)](./demo.mp4) ]
 
