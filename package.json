@@ -1,0 +1,23 @@
+{
+  "name": "cf_ai_engineering_principles_bot",
+  "version": "1.0.0",
+  "description": "An AI assistant that explains technical concepts through the lens of Cloudflare's core engineering principles. Built for the Cloudflare 2026 Internship assignment.",
+  "main": "index.js",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251004.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nj-09/cf_ai_engineering_principles_bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nj-09/cf_ai_engineering_principles_bot/issues"
+  },
+  "homepage": "https://github.com/nj-09/cf_ai_engineering_principles_bot#readme"
+}

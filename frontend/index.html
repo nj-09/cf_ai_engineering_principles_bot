@@ -58,10 +58,9 @@
             addMessage('You', message);
             chatInput.value = '';
             sendButton.disabled = true;
-            const thinkingMessage = addMessage('AI', 'Thinking...'); // Changed to keep reference
+            addMessage('AI', 'Thinking...');
 
             try {
-                // The API endpoint must match the worker logic
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -79,8 +78,7 @@
                 addMessage('AI', data.response);
 
             } catch (error) {
-                // Remove the "Thinking..." message before showing error
-                if (chatHistory.lastChild) {
+                if (chatHistory.lastChild && chatHistory.lastChild.innerText.includes('Thinking...')) {
                      chatHistory.removeChild(chatHistory.lastChild);
                 }
                 addMessage('Error', 'Sorry, something went wrong with the AI request.');
